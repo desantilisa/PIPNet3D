@@ -4,7 +4,7 @@
 """
 Created on Fri Nov 24 14:29:43 2023
 
-@author: lisadesanti
+@author: 
 """
 
 import os
