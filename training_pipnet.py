@@ -17,7 +17,7 @@ import torch
 import torch.nn as nn
 
 
-sys.path.append("3/DPIPNet/src/")
+sys.path.append("/3DPIPNet/src/")
 from utils import plot_3d_slices
 from utils import set_seeds
 from utils import set_device
