@@ -17,7 +17,7 @@ Classes (clinical cognitive decline level):
 
 Accepted at the [iMIMIC](https://imimic-workshop.com) workshop during the [MICCAI-2024](https://conferences.miccai.org/2024/en/) event.
 
-![Overview of PIPNet](https://github.com/desantilisa/PIMPNet3D/blob/main/pimpnet_poster.png)   
+![Overview of PIPNet](https://github.com/desantilisa/PIPNet3D/blob/main/pip3d-overview_v2.pdf)   
 
 Images and labels (cognitive decline level) were collected from the Alzheimer's Disease Neuroimaging Initiative (ADNI) https://adni.loni.usc.edu (data publicity available under request) and preprocessed using data_preprocessing.py functions.
 
