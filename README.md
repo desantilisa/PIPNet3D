@@ -25,8 +25,8 @@ Brain atlas (CerebrA) downloaded from https://nist.mni.mcgill.ca/cerebra/.
 
 Codes adapted from the original [PIPNet](https://github.com/M-Nauta/PIPNet/tree/main)
 
-Training a PIMPNet: main_train_pipnet.py
+Training a PIPNet: main_train_pipnet.py
 
-Test a trained PIMPNet: main_test_pipnet.py
+Test a trained PIPNet: main_test_pipnet.py
 
-Link to the weights of trained PIMPNet(s) available in "models" folder.
+Link to the weights of trained PIPNet(s) available in "models" folder.
