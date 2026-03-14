@@ -27,7 +27,7 @@ def get_patch_size(args):
     
     patch_z = round(args.img_shape[0]/args.dshape)
     patch_y = round(args.img_shape[1]/args.hshape)
-    patch_x = round(args.img_shape[2]/args.hshape)
+    patch_x = round(args.img_shape[2]/args.wshape)
     
     patchsize = (patch_z, patch_y, patch_x)
     skip_z = round((args.img_shape[0] - patch_z) / (args.dshape-1))
@@ -217,10 +217,24 @@ def visualize_topk(
         
         print("Localize each relevant prototype with similarity > 0.1 as a", "patch of the topk activated images in the training set,", i, flush=True)
         
+        xs, ys = xs.to(device), ys.to(torch.device)
+
+        # Use the model to classify this batch of input data
+        with torch.no_grad():
+            softmaxes, pooled, out = net(xs, inference = True) # softmaxes: (1,ps,d,h,w)                 
+            outmax = torch.amax(out, dim=1)[0]  # outmax: ([1]) as projectloader's bs=1 
+            if outmax.item() == 0.:
+                abstained += 1
+        
+        # Take the maximum per prototype in feature's space for image xs
+        max_per_prototype, max_idx_per_prototype = torch.max(softmaxes, dim=0) # (ps,d,h,w)
+        max_per_prototype_hw, max_idx_per_prototype_hw = torch.max(max_per_prototype, dim=1) # (ps,h,w)
+        max_per_prototype_h, max_idx_per_prototype_h = torch.max(max_per_prototype_hw, dim=1) # (ps,w)
+        max_per_prototype_w, max_idx_per_prototype_w = torch.max(max_per_prototype_h, dim=1) # (ps)
+
+
         # shuffle is false so should lead to same order as in imgs
         if i in alli:
-            
-            xs, ys = xs.to(device), ys.to(device)
             
             # visualize only relevant prototypes (weights connection > 0 at least for one class)
             for p in topks.keys():
@@ -231,20 +245,6 @@ def visualize_topk(
                     for idx, score in topks[p]:
                         
                         if idx == i:
-                            # Use the model to classify this batch of input data
-                            with torch.no_grad():
-
-                                softmaxes, pooled, out = net(xs, inference = True) # softmaxes: (1,ps,d,h,w)                 
-                                outmax = torch.amax(out, dim=1)[0]  # outmax: ([1]) as projectloader's bs=1 
-                                if outmax.item() == 0.:
-                                    abstained += 1
-                            
-                            # Take the maximum per prototype in feature's space for image xs
-                            max_per_prototype, max_idx_per_prototype = torch.max(softmaxes, dim=0) # (ps,d,h,w)
-                            max_per_prototype_hw, max_idx_per_prototype_hw = torch.max(max_per_prototype, dim=1) # (ps,h,w)
-                            max_per_prototype_h, max_idx_per_prototype_h = torch.max(max_per_prototype_hw, dim=1) # (ps,w)
-                            max_per_prototype_w, max_idx_per_prototype_w = torch.max(max_per_prototype_h, dim=1) # (ps)
-                            
                             c_weight = torch.max(classification_weights[:, p]) 
                             
                             # ignore prototypes that are not relevant to any class
