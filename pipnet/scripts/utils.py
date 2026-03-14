@@ -323,11 +323,26 @@ def get_optimizer_nn(
     params_backbone = []
     
     # set up optimizer
-    if 'resnet3D_18' or 'convnetx3D_tiny' in args.net:
+    if 'convnetx3D_tiny' in args.net:
         print("Network is ", args.net, flush = True)
         # Train all the backbone
         for name, param in net.module._net.named_parameters():
             params_to_train.append(param)
+
+    elif 'resnet3D_18' in args.net:
+        print("Network is ", args.net, flush = True)
+        # Freeze the first layers of the backbone
+        # Logic taken from Nauta's PIPNet (https://github.com/M-Nauta/PIPNet/blob/main/util/args.py#L152)
+        for name, param in net.module._net.named_parameters():
+            if 'layer4.1' in name:
+                params_to_train.append(param)
+            elif 'layer4' in name or 'layer3' in name:
+                params_to_freeze.append(param)
+            elif 'layer2' in name:
+                params_backbone.append(param)
+            else:
+                # Do not train first layer
+                param.requires_grad = False
     else:
         print("Network not implemented", flush = True)     
     
